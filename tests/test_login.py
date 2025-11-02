@@ -1,15 +1,13 @@
-from playwright.sync_api import sync_playwright
 from pages.login_page import LoginPage
+from utils.config import USERNAME, PASSWORD
 
-def test_valid_login():
-    with sync_playwright() as p:
-        browser = p.chromium.launch(headless=False)
-        page = browser.new_page()
+def test_valid_login(browser_page):
+    """
+    Test a successful login using valid credentials.
+    """
+    login_page = LoginPage(browser_page)
+    login_page.navigate()
+    login_page.login(USERNAME, PASSWORD)
 
-        login_page = LoginPage(page)
-        login_page.navigate()
-        login_page.login("standard_user", "secret_sauce")
-
-        assert "inventory" in page.url
-
-        browser.close()
+    # Verify user is redirected to inventory page
+    assert "inventory" in browser_page.url
